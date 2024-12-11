@@ -5,7 +5,7 @@ import com.andrianjoku.composeanimationplayground.R
 
 data class Node(
     val id: String,
-    val label: String,
+    val name: String,
     var position: Offset = Offset.Zero,
     var connections: List<String> = listOf(), // Node IDs this node is connected to
     val distanceFromCenter: Float,
