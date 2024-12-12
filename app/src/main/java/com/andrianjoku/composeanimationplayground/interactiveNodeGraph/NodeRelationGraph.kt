@@ -26,7 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.andrianjoku.composeanimationplayground.R
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -35,7 +34,7 @@ import kotlin.math.sqrt
 fun NodeRelationGraph() {
 
     // 1. Data Setup & State
-    val nodesState = remember { mutableStateOf(createSampleNodes()) }
+    val nodesState = remember { mutableStateOf(Helper.createSampleNodes()) }
     var selectedNode by remember { mutableStateOf(nodesState.value.first()) }
 
     // When we click through generations 1st -> 2nd etc then the parent who makes this jump remains
@@ -57,13 +56,17 @@ fun NodeRelationGraph() {
                 selectedNode = selectedNode
             )
 
+            println(" Selected Node is: $selectedNode")
+
             //if the node has children we are ascending through the generations
             // we therefore want to keep these nodes selected
-            nodesState.value.filter { it.id == "1" }
-                .find { it.connections.contains(selectedNode.id) }?.let {
-                nodeParentState = nodeParentState + selectedNode
-
-            }
+            nodesState.value
+                .find { it.connections.contains(selectedNode.id) }
+                ?.let { parentNode ->
+                    if (!nodeParentState.contains(parentNode)) {
+                        nodeParentState = nodeParentState + parentNode
+                    }
+                }
         }
 
         // Animate camera offset towards the selected node
@@ -113,301 +116,6 @@ fun NodeRelationGraph() {
     }
 }
 
-/**
- * Creates a sample list of nodes representing the graph.
- */
-private fun createSampleNodes(): List<Node> {
-    return listOf(
-        Node(
-            id = "1",
-            name = "Michael Johnson",
-            position = Offset.Zero,
-            connections = listOf("2", "3", "4", "5", "6", "7", "8"),
-            distanceFromCenter = 0f,
-            profileImage = R.drawable.profile1,
-            positiveKarma = 85
-        ),
-        Node(
-            id = "2",
-            name = "Emily Davis",
-            position = Offset.Zero,
-            connections = listOf("1", "9", "10"),
-            distanceFromCenter = 600f,
-            profileImage = R.drawable.profile2,
-            positiveKarma = 72
-        ),
-        Node(
-            id = "3",
-            name = "James Wilson",
-            position = Offset.Zero,
-            connections = listOf("1"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile3,
-            positiveKarma = 50
-        ),
-        Node(
-            id = "4",
-            name = "Sophia Brown",
-            position = Offset.Zero,
-            connections = listOf("1"),
-            distanceFromCenter = 400f,
-            profileImage = R.drawable.profile4,
-            positiveKarma = 60
-        ),
-        Node(
-            id = "5",
-            name = "Oliver Martinez",
-            position = Offset.Zero,
-            connections = listOf("1"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile5,
-            positiveKarma = 90
-        ),
-        Node(
-            id = "6",
-            name = "Ava Garcia",
-            position = Offset.Zero,
-            connections = listOf("1"),
-            distanceFromCenter = 700f,
-            profileImage = R.drawable.profile6,
-            positiveKarma = 45
-        ),
-        Node(
-            id = "7",
-            name = "Liam Anderson",
-            position = Offset.Zero,
-            connections = listOf("1"),
-            distanceFromCenter = 300f,
-            profileImage = R.drawable.profile7,
-            positiveKarma = 68
-        ),
-        Node(
-            id = "8",
-            name = "Mia Thompson",
-            position = Offset.Zero,
-            connections = listOf("1"),
-            distanceFromCenter = 400f,
-            profileImage = R.drawable.profile8,
-            positiveKarma = 55
-        ),
-        Node(
-            id = "9",
-            name = "Noah White",
-            position = Offset.Zero,
-            connections = listOf("1"),
-            distanceFromCenter = 400f,
-            profileImage = R.drawable.profile9,
-            positiveKarma = 30
-        ),
-        Node(
-            id = "10",
-            name = "Isabella Harris",
-            position = Offset.Zero,
-            connections = listOf("1"),
-            distanceFromCenter = 400f,
-            profileImage = R.drawable.profile10,
-            positiveKarma = 35
-        ),
-        Node(
-            id = "11",
-            name = "Ethan Clark",
-            position = Offset.Zero,
-            connections = listOf("1"),
-            distanceFromCenter = 400f,
-            profileImage = R.drawable.profile1,
-            positiveKarma = 40
-        ),
-        Node(
-            id = "12",
-            name = "Charlotte Lewis",
-            position = Offset.Zero,
-            connections = listOf("1"),
-            distanceFromCenter = 400f,
-            profileImage = R.drawable.profile2,
-            positiveKarma = 25
-        ),
-        Node(
-            id = "13",
-            name = "Amelia Hall",
-            position = Offset.Zero,
-            connections = listOf("2"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile3,
-            positiveKarma = 65
-        ),
-        Node(
-            id = "14",
-            name = "Alexander Young",
-            position = Offset.Zero,
-            connections = listOf("2"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile4,
-            positiveKarma = 42
-        ),
-        Node(
-            id = "15",
-            name = "Harper King",
-            position = Offset.Zero,
-            connections = listOf("2"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile5,
-            positiveKarma = 75
-        ),
-        Node(
-            id = "16",
-            name = "Lucas Wright",
-            position = Offset.Zero,
-            connections = listOf("2"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile6,
-            positiveKarma = 80
-        ),
-        Node(
-            id = "17",
-            name = "Ella Scott",
-            position = Offset.Zero,
-            connections = listOf("2"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile7,
-            positiveKarma = 50
-        ),
-        Node(
-            id = "18",
-            name = "Mason Green",
-            position = Offset.Zero,
-            connections = listOf("2"),
-            distanceFromCenter = 600f,
-            profileImage = R.drawable.profile8,
-            positiveKarma = 70
-        ),
-        Node(
-            id = "19",
-            name = "Avery Adams",
-            position = Offset.Zero,
-            connections = listOf("2"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile9,
-            positiveKarma = 88
-        ),
-        Node(
-            id = "20",
-            name = "Logan Perez",
-            position = Offset.Zero,
-            connections = listOf("2"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile10,
-            positiveKarma = 55
-        ),
-        Node(
-            id = "21",
-            name = "Evelyn Roberts",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 900f,
-            profileImage = R.drawable.profile1,
-            positiveKarma = 38
-        ),
-        Node(
-            id = "22",
-            name = "Jackson Turner",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 600f,
-            profileImage = R.drawable.profile2,
-            positiveKarma = 45
-        ),
-        Node(
-            id = "23",
-            name = "Luna Phillips",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 400f,
-            profileImage = R.drawable.profile3,
-            positiveKarma = 62
-        ),
-        Node(
-            id = "24",
-            name = "Sebastian Campbell",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile4,
-            positiveKarma = 72
-        ),
-        Node(
-            id = "25",
-            name = "Grace Parker",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile5,
-            positiveKarma = 85
-        ),
-        Node(
-            id = "26",
-            name = "Ella Mitchell",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 800f,
-            profileImage = R.drawable.profile6,
-            positiveKarma = 93
-        ),
-        Node(
-            id = "27",
-            name = "Henry Bailey",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 700f,
-            profileImage = R.drawable.profile7,
-            positiveKarma = 77
-        ),
-        Node(
-            id = "28",
-            name = "Scarlett Rivera",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 400f,
-            profileImage = R.drawable.profile8,
-            positiveKarma = 35
-        ),
-        Node(
-            id = "29",
-            name = "Daniel Cooper",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 500f,
-            profileImage = R.drawable.profile9,
-            positiveKarma = 48
-        ),
-        Node(
-            id = "30",
-            name = "Aria Watson",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 800f,
-            profileImage = R.drawable.profile10,
-            positiveKarma = 63
-        ),
-        Node(
-            id = "31",
-            name = "Levi Brooks",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 700f,
-            profileImage = R.drawable.profile1,
-            positiveKarma = 52
-        ),
-        Node(
-            id = "32",
-            name = "Victoria Foster",
-            position = Offset.Zero,
-            connections = listOf("3"),
-            distanceFromCenter = 400f,
-            profileImage = R.drawable.profile2,
-            positiveKarma = 40
-        )
-    )
-}
 
 /**
  * Positions first-generation nodes around the center and others around their parent.
@@ -456,6 +164,7 @@ private fun computeSecondGenPositions(nodes: List<Node>) {
         }
     }
 }
+
 
 /**
  * Updates the visibility of nodes based on the currently selected node.
@@ -538,7 +247,7 @@ private fun DrawScope.drawConnections(
 /**
  * Draws the nodes (circles) on the canvas.
  */
-private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawNodes(
+private fun DrawScope.drawNodes(
     nodes: List<Node>,
     centerOffset: Offset,
     selectedNode: Node

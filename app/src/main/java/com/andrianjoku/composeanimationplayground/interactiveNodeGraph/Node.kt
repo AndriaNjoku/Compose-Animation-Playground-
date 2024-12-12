@@ -12,6 +12,7 @@ data class Node(
     var visibility: NodeVisibility = NodeVisibility.NORMAL,
     val positiveKarma: Int = 0,
     val profileImage: Int = R.drawable.p1,
+    var generation: Int = 1,
 ) {
 
     /**
