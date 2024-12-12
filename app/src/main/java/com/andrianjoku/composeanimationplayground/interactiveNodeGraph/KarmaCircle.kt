@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -40,7 +41,7 @@ fun NodeRelationGraph() {
     // When we click through generations 1st -> 2nd etc then the parent who makes this jump remains
     // selected as a route back up through the generations.
 
-    var nodeParentState by remember { mutableStateOf(listOf(selectedNode)) }
+    var nodeParentState by remember { mutableStateOf(emptyList<Node>()) }
 
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -58,7 +59,8 @@ fun NodeRelationGraph() {
 
             //if the node has children we are ascending through the generations
             // we therefore want to keep these nodes selected
-            nodesState.value.find { it.connections.contains(selectedNode.id) }?.let {
+            nodesState.value.filter { it.id == "1" }
+                .find { it.connections.contains(selectedNode.id) }?.let {
                 nodeParentState = nodeParentState + selectedNode
 
             }
@@ -80,9 +82,13 @@ fun NodeRelationGraph() {
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onTap = { tapOffset ->
-                            val tappedNode = findClosestNode(nodesState.value, tapOffset, centerOffset)
-                            if (tappedNode != null && tappedNode.isFirsGen(selectedNode)) {
-                                selectedNode = tappedNode
+                            val tappedNode =
+                                findClosestNode(nodesState.value, tapOffset, centerOffset)
+                            if (tappedNode != null && tappedNode.isFirsGen(selectedNode) || nodeParentState.contains(
+                                    tappedNode
+                                )
+                            ) {
+                                selectedNode = tappedNode!!
                             }
                         }
                     )
@@ -96,8 +102,10 @@ fun NodeRelationGraph() {
 
             // 5. Overlays: User Node Image & Selected Node UI
             DrawNodeImage(
-                nodesState.value.find { it.id == "1" }!!,
                 nodeParentState,
+                nodesState.value.filter { it.isFirsGen(selectedNode) } // Filter for first-generation nodes
+                    .sortedByDescending { it.positiveKarma } // Sort by positiveKarma in descending order
+                    .take(5),
                 centerOffset
             )
             DrawSelectedNodeOverlay(selectedNode)
@@ -116,7 +124,7 @@ private fun createSampleNodes(): List<Node> {
             position = Offset.Zero,
             connections = listOf("2", "3", "4", "5", "6", "7", "8"),
             distanceFromCenter = 0f,
-            profileImage = R.drawable.p1,
+            profileImage = R.drawable.profile1,
             positiveKarma = 85
         ),
         Node(
@@ -125,7 +133,7 @@ private fun createSampleNodes(): List<Node> {
             position = Offset.Zero,
             connections = listOf("1", "9", "10"),
             distanceFromCenter = 600f,
-            profileImage = R.drawable.p2,
+            profileImage = R.drawable.profile2,
             positiveKarma = 72
         ),
         Node(
@@ -134,7 +142,7 @@ private fun createSampleNodes(): List<Node> {
             position = Offset.Zero,
             connections = listOf("1"),
             distanceFromCenter = 500f,
-            profileImage = R.drawable.p3,
+            profileImage = R.drawable.profile3,
             positiveKarma = 50
         ),
         Node(
@@ -143,7 +151,7 @@ private fun createSampleNodes(): List<Node> {
             position = Offset.Zero,
             connections = listOf("1"),
             distanceFromCenter = 400f,
-            profileImage = R.drawable.p2,
+            profileImage = R.drawable.profile4,
             positiveKarma = 60
         ),
         Node(
@@ -152,7 +160,7 @@ private fun createSampleNodes(): List<Node> {
             position = Offset.Zero,
             connections = listOf("1"),
             distanceFromCenter = 500f,
-            profileImage = R.drawable.p5,
+            profileImage = R.drawable.profile5,
             positiveKarma = 90
         ),
         Node(
@@ -161,7 +169,7 @@ private fun createSampleNodes(): List<Node> {
             position = Offset.Zero,
             connections = listOf("1"),
             distanceFromCenter = 700f,
-            profileImage = R.drawable.p6,
+            profileImage = R.drawable.profile6,
             positiveKarma = 45
         ),
         Node(
@@ -170,7 +178,7 @@ private fun createSampleNodes(): List<Node> {
             position = Offset.Zero,
             connections = listOf("1"),
             distanceFromCenter = 300f,
-            profileImage = R.drawable.p7,
+            profileImage = R.drawable.profile7,
             positiveKarma = 68
         ),
         Node(
@@ -179,198 +187,223 @@ private fun createSampleNodes(): List<Node> {
             position = Offset.Zero,
             connections = listOf("1"),
             distanceFromCenter = 400f,
+            profileImage = R.drawable.profile8,
             positiveKarma = 55
         ),
         Node(
-            id = "11",
+            id = "9",
             name = "Noah White",
             position = Offset.Zero,
             connections = listOf("1"),
             distanceFromCenter = 400f,
+            profileImage = R.drawable.profile9,
             positiveKarma = 30
         ),
         Node(
-            id = "12",
+            id = "10",
             name = "Isabella Harris",
             position = Offset.Zero,
             connections = listOf("1"),
             distanceFromCenter = 400f,
+            profileImage = R.drawable.profile10,
             positiveKarma = 35
         ),
         Node(
-            id = "13",
+            id = "11",
             name = "Ethan Clark",
             position = Offset.Zero,
             connections = listOf("1"),
             distanceFromCenter = 400f,
+            profileImage = R.drawable.profile1,
             positiveKarma = 40
         ),
         Node(
-            id = "14",
+            id = "12",
             name = "Charlotte Lewis",
             position = Offset.Zero,
             connections = listOf("1"),
             distanceFromCenter = 400f,
+            profileImage = R.drawable.profile2,
             positiveKarma = 25
         ),
         Node(
-            id = "15",
+            id = "13",
             name = "Amelia Hall",
             position = Offset.Zero,
             connections = listOf("2"),
             distanceFromCenter = 500f,
+            profileImage = R.drawable.profile3,
             positiveKarma = 65
         ),
         Node(
-            id = "16",
+            id = "14",
             name = "Alexander Young",
             position = Offset.Zero,
             connections = listOf("2"),
             distanceFromCenter = 500f,
+            profileImage = R.drawable.profile4,
             positiveKarma = 42
         ),
         Node(
-            id = "17",
+            id = "15",
             name = "Harper King",
             position = Offset.Zero,
             connections = listOf("2"),
             distanceFromCenter = 500f,
+            profileImage = R.drawable.profile5,
             positiveKarma = 75
         ),
         Node(
-            id = "18",
+            id = "16",
             name = "Lucas Wright",
             position = Offset.Zero,
             connections = listOf("2"),
             distanceFromCenter = 500f,
+            profileImage = R.drawable.profile6,
             positiveKarma = 80
         ),
         Node(
-            id = "19",
+            id = "17",
             name = "Ella Scott",
             position = Offset.Zero,
             connections = listOf("2"),
             distanceFromCenter = 500f,
+            profileImage = R.drawable.profile7,
             positiveKarma = 50
         ),
         Node(
-            id = "20",
+            id = "18",
             name = "Mason Green",
             position = Offset.Zero,
             connections = listOf("2"),
             distanceFromCenter = 600f,
+            profileImage = R.drawable.profile8,
             positiveKarma = 70
         ),
         Node(
-            id = "21",
+            id = "19",
             name = "Avery Adams",
             position = Offset.Zero,
             connections = listOf("2"),
             distanceFromCenter = 500f,
+            profileImage = R.drawable.profile9,
             positiveKarma = 88
         ),
         Node(
-            id = "22",
+            id = "20",
             name = "Logan Perez",
             position = Offset.Zero,
             connections = listOf("2"),
             distanceFromCenter = 500f,
+            profileImage = R.drawable.profile10,
             positiveKarma = 55
         ),
         Node(
-            id = "23",
+            id = "21",
             name = "Evelyn Roberts",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 900f,
+            profileImage = R.drawable.profile1,
             positiveKarma = 38
         ),
         Node(
-            id = "24",
+            id = "22",
             name = "Jackson Turner",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 600f,
+            profileImage = R.drawable.profile2,
             positiveKarma = 45
         ),
         Node(
-            id = "25",
+            id = "23",
             name = "Luna Phillips",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 400f,
+            profileImage = R.drawable.profile3,
             positiveKarma = 62
         ),
         Node(
-            id = "26",
+            id = "24",
             name = "Sebastian Campbell",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 500f,
+            profileImage = R.drawable.profile4,
             positiveKarma = 72
         ),
         Node(
-            id = "27",
+            id = "25",
             name = "Grace Parker",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 500f,
+            profileImage = R.drawable.profile5,
             positiveKarma = 85
         ),
         Node(
-            id = "28",
+            id = "26",
             name = "Ella Mitchell",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 800f,
+            profileImage = R.drawable.profile6,
             positiveKarma = 93
         ),
         Node(
-            id = "29",
+            id = "27",
             name = "Henry Bailey",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 700f,
+            profileImage = R.drawable.profile7,
             positiveKarma = 77
         ),
         Node(
-            id = "30",
+            id = "28",
             name = "Scarlett Rivera",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 400f,
+            profileImage = R.drawable.profile8,
             positiveKarma = 35
         ),
         Node(
-            id = "31",
+            id = "29",
             name = "Daniel Cooper",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 500f,
+            profileImage = R.drawable.profile9,
             positiveKarma = 48
         ),
         Node(
-            id = "32",
+            id = "30",
             name = "Aria Watson",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 800f,
+            profileImage = R.drawable.profile10,
             positiveKarma = 63
         ),
         Node(
-            id = "33",
+            id = "31",
             name = "Levi Brooks",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 700f,
+            profileImage = R.drawable.profile1,
             positiveKarma = 52
         ),
         Node(
-            id = "34",
+            id = "32",
             name = "Victoria Foster",
             position = Offset.Zero,
             connections = listOf("3"),
             distanceFromCenter = 400f,
+            profileImage = R.drawable.profile2,
             positiveKarma = 40
         )
     )
@@ -405,7 +438,6 @@ private fun computeNodePositions(nodes: List<Node>) {
  */
 private fun computeSecondGenPositions(nodes: List<Node>) {
     nodes.forEach { parentNode ->
-        // Nodes that are connected to parentNode but not "1" and not the parent itself
         val secondGenNodes = nodes.filter {
             it.connections.contains(parentNode.id) && it.id != "1" && it.id != parentNode.id
         }
@@ -457,7 +489,7 @@ private fun findParentNodePosition(nodes: List<Node>, node: Node): Offset {
 /**
  * Draws connections (lines) between connected nodes on the canvas.
  */
-private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawConnections(
+private fun DrawScope.drawConnections(
     nodes: List<Node>,
     centerOffset: Offset,
     selectedNode: Node
@@ -473,7 +505,11 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawConnections(
                 when (node.visibility) {
                     NodeVisibility.NORMAL -> {
                         drawLine(
-                            color = Color.Gray,
+                            color = if (node.positiveKarma >= 50.0) {
+                                Color.Green
+                            } else {
+                                    Color.Red
+                                },
                             start = start,
                             end = end,
                             strokeWidth = strokeWidth
@@ -511,13 +547,13 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawNodes(
         val nodeCenter = node.position + centerOffset
         when (node.visibility) {
             NodeVisibility.NORMAL -> {
-                val radius = if (node.id == "1" || node == selectedNode) {
+                val radius = if (node == selectedNode) {
                     200f
                 } else {
                     (60f / 100) + node.positiveKarma.toFloat()
                 }
                 drawCircle(
-                    color = if (node == selectedNode) Color.Red else Color.Blue,
+                    color = if (node.positiveKarma <= 50) Color.Red else Color.Green,
                     radius = radius,
                     center = nodeCenter
                 )
@@ -540,56 +576,33 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawNodes(
 }
 
 
-/**
- * Draws the user node image (node with id "1") at its current position.
- */
 @Composable
 private fun DrawNodeImage(
-    userNode: Node,
     parentNodes: List<Node>,
+    nodes: List<Node>,
     centerOffset: Offset
 ) {
     val density = LocalDensity.current
 
-    //position the user
-    val userImageOffsetX = with(density) { (userNode.position.x + centerOffset.x).toDp() - 50.dp }
-    val userImageOffsetY = with(density) { (userNode.position.y + centerOffset.y).toDp() - 50.dp }
-
-    Box(
-        modifier = Modifier
-            .offset(userImageOffsetX - 20.dp, userImageOffsetY - 20.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = userNode.profileImage),
-            contentDescription = null,
-            modifier = Modifier
-                .size(137.dp)
-                .clip(CircleShape)
-        )
-    }
-
-    //position the parent nodes
-    parentNodes.forEach { node ->
-        val parentImageOffsetX = with(density) { (node.position.x + centerOffset.x).toDp() - 50.dp }
-        val parentImageOffsetY = with(density) { (node.position.y + centerOffset.y).toDp() - 50.dp }
-
+    // Position the parent nodes
+    (parentNodes + nodes).forEach { node ->
+        val parentImageOffset = node.position + centerOffset
+        val parentImageOffsetX = with(density) { parentImageOffset.x.toDp() - (node.positiveKarma / 2).dp }
+        val parentImageOffsetY = with(density) { parentImageOffset.y.toDp() - (node.positiveKarma / 2).dp }
 
         Box(
             modifier = Modifier
-                .offset(parentImageOffsetX - 20.dp, parentImageOffsetY - 20.dp),
+                .offset(parentImageOffsetX, parentImageOffsetY),
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = userNode.profileImage),
+                painter = painterResource(id = node.profileImage),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(137.dp)
+                    .size((node.positiveKarma).dp) // Ensure size reflects karma
                     .clip(CircleShape)
             )
         }
-
-
     }
 }
 
@@ -601,7 +614,7 @@ private fun DrawNodeImage(
 private fun DrawSelectedNodeOverlay(selectedNode: Node) {
     Box(
         modifier = Modifier
-            .offset(156.dp, 395.dp)
+            .offset(145.dp, 350.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -611,7 +624,7 @@ private fun DrawSelectedNodeOverlay(selectedNode: Node) {
                 painter = painterResource(id = selectedNode.profileImage),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(137.dp)
+                    .size(120.dp)
                     .clip(CircleShape)
             )
         }
