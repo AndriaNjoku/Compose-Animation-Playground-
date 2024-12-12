@@ -12,10 +12,13 @@ data class Node(
     var visibility: NodeVisibility = NodeVisibility.NORMAL,
     val positiveKarma: Int = 0,
     val profileImage: Int = R.drawable.p1,
-    ) {
+) {
 
-    fun isFirsGen(): Boolean {
-        return connections.contains("1")
+    /**
+     * Directly connected to the selected node.
+     */
+    fun isFirsGen(selectedNode: Node): Boolean {
+        return connections.contains(selectedNode.id) || id == "1"
     }
 }
 

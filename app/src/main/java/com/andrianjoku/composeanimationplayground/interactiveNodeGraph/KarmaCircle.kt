@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +37,12 @@ fun NodeRelationGraph() {
     val nodesState = remember { mutableStateOf(createSampleNodes()) }
     var selectedNode by remember { mutableStateOf(nodesState.value.first()) }
 
+    // When we click through generations 1st -> 2nd etc then the parent who makes this jump remains
+    // selected as a route back up through the generations.
+
+    var nodeParentState by remember { mutableStateOf(listOf(selectedNode)) }
+
+
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         // 2. Layout Computations
         val screenCenter = Offset(maxWidth.toPx() / 2, maxHeight.toPx() / 2)
@@ -50,12 +55,22 @@ fun NodeRelationGraph() {
                 nodes = nodesState.value,
                 selectedNode = selectedNode
             )
+
+            //if the node has children we are ascending through the generations
+            // we therefore want to keep these nodes selected
+            nodesState.value.find { it.connections.contains(selectedNode.id) }?.let {
+                nodeParentState = nodeParentState + selectedNode
+
+            }
         }
 
         // Animate camera offset towards the selected node
         val centerOffset by animateOffsetAsState(
             targetValue = screenCenter - selectedNode.position,
-            animationSpec = tween(durationMillis = 600, easing = androidx.compose.animation.core.EaseInOut)
+            animationSpec = tween(
+                durationMillis = 300,
+                easing = androidx.compose.animation.core.EaseInOut
+            )
         )
 
         // 3. UI Structure
@@ -66,7 +81,7 @@ fun NodeRelationGraph() {
                     detectTapGestures(
                         onTap = { tapOffset ->
                             val tappedNode = findClosestNode(nodesState.value, tapOffset, centerOffset)
-                            if (tappedNode != null) {
+                            if (tappedNode != null && tappedNode.isFirsGen(selectedNode)) {
                                 selectedNode = tappedNode
                             }
                         }
@@ -80,7 +95,11 @@ fun NodeRelationGraph() {
             }
 
             // 5. Overlays: User Node Image & Selected Node UI
-            DrawUserNodeImage(nodesState.value, centerOffset)
+            DrawNodeImage(
+                nodesState.value.find { it.id == "1" }!!,
+                nodeParentState,
+                centerOffset
+            )
             DrawSelectedNodeOverlay(selectedNode)
         }
     }
@@ -385,8 +404,6 @@ private fun computeNodePositions(nodes: List<Node>) {
  * Positions second-generation nodes around their parent node.
  */
 private fun computeSecondGenPositions(nodes: List<Node>) {
-    val centerNode = nodes.find { it.id == "1" } ?: return
-
     nodes.forEach { parentNode ->
         // Nodes that are connected to parentNode but not "1" and not the parent itself
         val secondGenNodes = nodes.filter {
@@ -398,8 +415,10 @@ private fun computeSecondGenPositions(nodes: List<Node>) {
             secondGenNodes.forEachIndexed { i, childNode ->
                 val angle = i * (360f / count)
                 val radians = Math.toRadians(angle.toDouble())
-                val px = parentNode.position.x + (childNode.distanceFromCenter * cos(radians)).toFloat()
-                val py = parentNode.position.y + (childNode.distanceFromCenter * sin(radians)).toFloat()
+                val px =
+                    parentNode.position.x + (childNode.distanceFromCenter * cos(radians)).toFloat()
+                val py =
+                    parentNode.position.y + (childNode.distanceFromCenter * sin(radians)).toFloat()
                 childNode.position = Offset(px, py)
             }
         }
@@ -453,7 +472,12 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawConnections(
 
                 when (node.visibility) {
                     NodeVisibility.NORMAL -> {
-                        drawLine(color = Color.Gray, start = start, end = end, strokeWidth = strokeWidth)
+                        drawLine(
+                            color = Color.Gray,
+                            start = start,
+                            end = end,
+                            strokeWidth = strokeWidth
+                        )
                     }
 
                     NodeVisibility.DIMMED -> {
@@ -515,30 +539,57 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawNodes(
     }
 }
 
+
 /**
  * Draws the user node image (node with id "1") at its current position.
  */
 @Composable
-private fun DrawUserNodeImage(nodes: List<Node>, centerOffset: Offset) {
-    val userNode = nodes.find { it.id == "1" } ?: return
+private fun DrawNodeImage(
+    userNode: Node,
+    parentNodes: List<Node>,
+    centerOffset: Offset
+) {
     val density = LocalDensity.current
 
+    //position the user
     val userImageOffsetX = with(density) { (userNode.position.x + centerOffset.x).toDp() - 50.dp }
     val userImageOffsetY = with(density) { (userNode.position.y + centerOffset.y).toDp() - 50.dp }
 
     Box(
         modifier = Modifier
-            .offset(userImageOffsetX, userImageOffsetY),
+            .offset(userImageOffsetX - 20.dp, userImageOffsetY - 20.dp),
         contentAlignment = Alignment.Center
     ) {
         Image(
             painter = painterResource(id = userNode.profileImage),
             contentDescription = null,
             modifier = Modifier
-                .size(100.dp)
+                .size(137.dp)
                 .clip(CircleShape)
         )
-        Text(text = "Micheal")
+    }
+
+    //position the parent nodes
+    parentNodes.forEach { node ->
+        val parentImageOffsetX = with(density) { (node.position.x + centerOffset.x).toDp() - 50.dp }
+        val parentImageOffsetY = with(density) { (node.position.y + centerOffset.y).toDp() - 50.dp }
+
+
+        Box(
+            modifier = Modifier
+                .offset(parentImageOffsetX - 20.dp, parentImageOffsetY - 20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = userNode.profileImage),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(137.dp)
+                    .clip(CircleShape)
+            )
+        }
+
+
     }
 }
 
@@ -550,7 +601,7 @@ private fun DrawUserNodeImage(nodes: List<Node>, centerOffset: Offset) {
 private fun DrawSelectedNodeOverlay(selectedNode: Node) {
     Box(
         modifier = Modifier
-            .offset(155.dp, 365.dp)
+            .offset(156.dp, 395.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -560,7 +611,7 @@ private fun DrawSelectedNodeOverlay(selectedNode: Node) {
                 painter = painterResource(id = selectedNode.profileImage),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(100.dp)
+                    .size(137.dp)
                     .clip(CircleShape)
             )
         }
