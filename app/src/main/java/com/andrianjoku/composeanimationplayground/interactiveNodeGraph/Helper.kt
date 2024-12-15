@@ -18,16 +18,16 @@ object Helper {
                 connections = listOf("2", "3", "4", "5", "6", "7", "8"),
                 distanceFromCenter = 0f,
                 profileImage = R.drawable.profile1,
-                positiveKarma = 85
+                axiom = 85
             ),
             Node(
                 id = "2",
                 name = "Emily Davis",
                 position = Offset.Zero,
-                connections = listOf("1", "9", "10"),
+                connections = listOf("1",),
                 distanceFromCenter = 600f,
                 profileImage = R.drawable.profile2,
-                positiveKarma = 72
+                axiom = 72
             ),
             Node(
                 id = "3",
@@ -36,7 +36,7 @@ object Helper {
                 connections = listOf("1"),
                 distanceFromCenter = 500f,
                 profileImage = R.drawable.profile3,
-                positiveKarma = 50
+                axiom = 100
             ),
             Node(
                 id = "4",
@@ -45,7 +45,7 @@ object Helper {
                 connections = listOf("1"),
                 distanceFromCenter = 400f,
                 profileImage = R.drawable.profile4,
-                positiveKarma = 60
+                axiom = 60
             ),
             Node(
                 id = "5",
@@ -54,7 +54,7 @@ object Helper {
                 connections = listOf("1"),
                 distanceFromCenter = 500f,
                 profileImage = R.drawable.profile5,
-                positiveKarma = 90
+                axiom = 90
             ),
             Node(
                 id = "6",
@@ -63,7 +63,7 @@ object Helper {
                 connections = listOf("1"),
                 distanceFromCenter = 700f,
                 profileImage = R.drawable.profile6,
-                positiveKarma = 45
+                axiom = 55
             ),
             Node(
                 id = "7",
@@ -72,7 +72,7 @@ object Helper {
                 connections = listOf("1"),
                 distanceFromCenter = 300f,
                 profileImage = R.drawable.profile7,
-                positiveKarma = 68
+                axiom = 68
             ),
             Node(
                 id = "8",
@@ -81,7 +81,7 @@ object Helper {
                 connections = listOf("1"),
                 distanceFromCenter = 400f,
                 profileImage = R.drawable.profile8,
-                positiveKarma = 55
+                axiom = 55
             ),
             Node(
                 id = "11",
@@ -90,7 +90,7 @@ object Helper {
                 connections = listOf("1"),
                 distanceFromCenter = 400f,
                 profileImage = R.drawable.profile9,
-                positiveKarma = 30
+                axiom = 30
             ),
             Node(
                 id = "12",
@@ -99,7 +99,7 @@ object Helper {
                 connections = listOf("1"),
                 distanceFromCenter = 400f,
                 profileImage = R.drawable.profile10,
-                positiveKarma = 35
+                axiom = 35
             ),
             Node(
                 id = "13",
@@ -108,7 +108,7 @@ object Helper {
                 connections = listOf("1"),
                 distanceFromCenter = 400f,
                 profileImage = R.drawable.profile1,
-                positiveKarma = 40
+                axiom = 40
             ),
             Node(
                 id = "14",
@@ -117,7 +117,7 @@ object Helper {
                 connections = listOf("1"),
                 distanceFromCenter = 400f,
                 profileImage = R.drawable.profile2,
-                positiveKarma = 25
+                axiom = 25
             ),
             Node(
                 id = "15",
@@ -126,7 +126,7 @@ object Helper {
                 connections = listOf("2"),
                 distanceFromCenter = 500f,
                 profileImage = R.drawable.profile3,
-                positiveKarma = 65
+                axiom = 65
             ),
             Node(
                 id = "16",
@@ -135,16 +135,16 @@ object Helper {
                 connections = listOf("2"),
                 distanceFromCenter = 500f,
                 profileImage = R.drawable.profile4,
-                positiveKarma = 42
+                axiom = 42
             ),
             Node(
                 id = "17",
                 name = "Harper King",
                 position = Offset.Zero,
                 connections = listOf("2"),
-                distanceFromCenter = 500f,
+                distanceFromCenter = 700f,
                 profileImage = R.drawable.profile5,
-                positiveKarma = 75
+                axiom = 75
             ),
             Node(
                 id = "18",
@@ -153,7 +153,7 @@ object Helper {
                 connections = listOf("2"),
                 distanceFromCenter = 500f,
                 profileImage = R.drawable.profile6,
-                positiveKarma = 80
+                axiom = 80
             ),
             Node(
                 id = "19",
@@ -162,7 +162,7 @@ object Helper {
                 connections = listOf("2"),
                 distanceFromCenter = 500f,
                 profileImage = R.drawable.profile7,
-                positiveKarma = 50
+                axiom = 50
             ),
             Node(
                 id = "20",
@@ -171,7 +171,7 @@ object Helper {
                 connections = listOf("2"),
                 distanceFromCenter = 600f,
                 profileImage = R.drawable.profile8,
-                positiveKarma = 70
+                axiom = 70
             ),
             Node(
                 id = "21",
@@ -180,7 +180,7 @@ object Helper {
                 connections = listOf("2"),
                 distanceFromCenter = 500f,
                 profileImage = R.drawable.profile9,
-                positiveKarma = 88
+                axiom = 88
             ),
             Node(
                 id = "22",
@@ -189,7 +189,7 @@ object Helper {
                 connections = listOf("2"),
                 distanceFromCenter = 500f,
                 profileImage = R.drawable.profile10,
-                positiveKarma = 55
+                axiom = 55
             ),
             Node(
                 id = "23",
@@ -198,7 +198,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 900f,
                 profileImage = R.drawable.profile1,
-                positiveKarma = 38
+                axiom = 38
             ),
             Node(
                 id = "24",
@@ -207,7 +207,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 600f,
                 profileImage = R.drawable.profile2,
-                positiveKarma = 45
+                axiom = 45
             ),
             Node(
                 id = "25",
@@ -216,7 +216,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 400f,
                 profileImage = R.drawable.profile3,
-                positiveKarma = 62
+                axiom = 62
             ),
             Node(
                 id = "26",
@@ -225,7 +225,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 500f,
                 profileImage = R.drawable.profile4,
-                positiveKarma = 72
+                axiom = 72
             ),
             Node(
                 id = "27",
@@ -234,7 +234,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 500f,
                 profileImage = R.drawable.profile5,
-                positiveKarma = 85
+                axiom = 85
             ),
             Node(
                 id = "28",
@@ -243,7 +243,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 800f,
                 profileImage = R.drawable.profile6,
-                positiveKarma = 93
+                axiom = 93
             ),
             Node(
                 id = "29",
@@ -252,7 +252,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 700f,
                 profileImage = R.drawable.profile7,
-                positiveKarma = 77
+                axiom = 77
             ),
             Node(
                 id = "30",
@@ -261,7 +261,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 400f,
                 profileImage = R.drawable.profile8,
-                positiveKarma = 35
+                axiom = 35
             ),
             Node(
                 id = "31",
@@ -270,7 +270,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 500f,
                 profileImage = R.drawable.profile9,
-                positiveKarma = 48
+                axiom = 48
             ),
             Node(
                 id = "32",
@@ -279,7 +279,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 800f,
                 profileImage = R.drawable.profile10,
-                positiveKarma = 63
+                axiom = 63
             ),
             Node(
                 id = "33",
@@ -288,7 +288,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 700f,
                 profileImage = R.drawable.profile1,
-                positiveKarma = 52
+                axiom = 52
             ),
             Node(
                 id = "34",
@@ -297,7 +297,7 @@ object Helper {
                 connections = listOf("3"),
                 distanceFromCenter = 400f,
                 profileImage = R.drawable.profile2,
-                positiveKarma = 40
+                axiom = 40
             ),
             Node(
                 id = "35",
@@ -305,8 +305,8 @@ object Helper {
                 position = Offset.Zero,
                 connections = listOf("17"),
                 distanceFromCenter = 400f,
-                profileImage = R.drawable.profile2,
-                positiveKarma = 40
+                profileImage = R.drawable.profile3,
+                axiom = 40
             ),
             Node(
                 id = "36",
@@ -314,8 +314,8 @@ object Helper {
                 position = Offset.Zero,
                 connections = listOf("17"),
                 distanceFromCenter = 400f,
-                profileImage = R.drawable.profile2,
-                positiveKarma = 40
+                profileImage = R.drawable.profile4,
+                axiom = 40
             ),
             Node(
                 id = "37",
@@ -323,48 +323,73 @@ object Helper {
                 position = Offset.Zero,
                 connections = listOf("17"),
                 distanceFromCenter = 600f,
+                profileImage = R.drawable.profile5,
+                axiom = 60
+            ),
+            Node(
+                id = "38",
+                name = "Victoria Foster",
+                position = Offset.Zero,
+                connections = listOf("17"),
+                distanceFromCenter = 600f,
+                profileImage = R.drawable.profile6,
+                axiom = 60
+            ),
+            Node(
+                id = "39",
+                name = "Victoria Foster",
+                position = Offset.Zero,
+                connections = listOf("17"),
+                distanceFromCenter = 600f,
+                profileImage = R.drawable.profile7,
+                axiom = 60
+            ),
+            Node(
+                id = "40",
+                name = "Victoria Foster",
+                position = Offset.Zero,
+                connections = listOf("17"),
+                distanceFromCenter = 600f,
+                profileImage = R.drawable.profile8,
+                axiom = 60
+            ),
+            Node(
+                id = "41",
+                name = "Victoria Foster",
+                position = Offset.Zero,
+                connections = listOf("38"),
+                distanceFromCenter = 600f,
+                profileImage = R.drawable.profile9,
+                axiom = 60
+            ),
+            Node(
+                id = "42",
+                name = "Victoria Foster",
+                position = Offset.Zero,
+                connections = listOf("39"),
+                distanceFromCenter = 600f,
+                profileImage = R.drawable.profile10,
+                axiom = 60
+            ),
+            Node(
+                id = "43",
+                name = "Victoria Foster",
+                position = Offset.Zero,
+                connections = listOf("38"),
+                distanceFromCenter = 400f,
+                profileImage = R.drawable.profile1,
+                axiom = 60
+            ),
+            Node(
+                id = "44",
+                name = "Victoria Foster",
+                position = Offset.Zero,
+                connections = listOf("38"),
+                distanceFromCenter = 300f,
                 profileImage = R.drawable.profile2,
-                positiveKarma = 60
+                axiom = 60
             )
 
         )
-    }
-
-    /**
-     * Assigns generations to nodes based on their connections.
-     */
-    fun assignGenerations(
-        nodes: List<Node>,
-        rootId: String = "1"
-    ): List<Node> {
-        if (nodes.isEmpty()) return emptyList() // Handle empty input
-
-        val nodeMap = nodes.associateBy { it.id }.toMutableMap()
-        val queue: Queue<Pair<Node, Int>> = LinkedList()
-        val visited = mutableSetOf<String>()
-
-        // Initialize the root node
-        val rootNode = nodeMap[rootId] ?: throw IllegalArgumentException("Root node with ID $rootId not found")
-        queue.add(Pair(rootNode, 1))
-        visited.add(rootId)
-
-        // BFS to assign generations
-        while (queue.isNotEmpty()) {
-            val (currentNode, currentGeneration) = queue.remove()
-            currentNode.generation = currentGeneration
-
-            // Process all connections
-            currentNode.connections.forEach { connectionId ->
-                if (!visited.contains(connectionId)) {
-                    nodeMap[connectionId]?.let { childNode ->
-                        queue.add(Pair(childNode, currentGeneration + 1))
-                        visited.add(connectionId)
-                    }
-                }
-            }
-        }
-
-        // Ensure all nodes are returned even if disconnected
-        return nodeMap.values.toList()
     }
 }

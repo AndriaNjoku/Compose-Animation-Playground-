@@ -37,19 +37,14 @@ fun NodeRelationGraph() {
     val nodesState = remember { mutableStateOf(Helper.createSampleNodes()) }
     var selectedNode by remember { mutableStateOf(nodesState.value.first()) }
 
-    // When we click through generations 1st -> 2nd etc then the parent who makes this jump remains
-    // selected as a route back up through the generations.
-
     var nodeParentState by remember { mutableStateOf(emptyList<Node>()) }
 
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        // 2. Layout Computations
         val screenCenter = Offset(maxWidth.toPx() / 2, maxHeight.toPx() / 2)
-        computeNodePositions(nodesState.value)
-        computeSecondGenPositions(nodesState.value)
 
-        // Update visibility based on selected node
+       computeNodesAroundParents(nodesState.value)
+
         LaunchedEffect(selectedNode) {
             updateNodeVisibility(
                 nodes = nodesState.value,
@@ -58,13 +53,11 @@ fun NodeRelationGraph() {
 
             println(" Selected Node is: $selectedNode")
 
-            //if the node has children we are ascending through the generations
-            // we therefore want to keep these nodes selected
             nodesState.value
-                .find { it.connections.contains(selectedNode.id) }
-                ?.let { parentNode ->
+                .find { it.connections.contains(selectedNode.id) } // Look for children
+                ?.let { parentNode -> // selected node is a parent
                     if (!nodeParentState.contains(parentNode)) {
-                        nodeParentState = nodeParentState + parentNode
+                        nodeParentState = nodeParentState + parentNode // Add to list
                     }
                 }
         }
@@ -107,7 +100,7 @@ fun NodeRelationGraph() {
             DrawNodeImage(
                 nodeParentState,
                 nodesState.value.filter { it.isFirsGen(selectedNode) } // Filter for first-generation nodes
-                    .sortedByDescending { it.positiveKarma } // Sort by positiveKarma in descending order
+                    .sortedByDescending { it.axiom } // Sort by positiveKarma in descending order
                     .take(5),
                 centerOffset
             )
@@ -116,49 +109,22 @@ fun NodeRelationGraph() {
     }
 }
 
-
-/**
- * Positions first-generation nodes around the center and others around their parent.
- */
-private fun computeNodePositions(nodes: List<Node>) {
-    val totalNodes = nodes.size
-    val nonCenterNodesCount = totalNodes - 1
-    val angleStep = if (nonCenterNodesCount > 0) 360f / nonCenterNodesCount else 0f
-
-    nodes.forEachIndexed { index, node ->
-        if (node.id == "1") {
-            node.position = Offset.Zero
-        } else {
-            val angle = index * angleStep
-            val radians = Math.toRadians(angle.toDouble())
-            val isFirstGen = node.connections.contains("1")
-            val origin = if (isFirstGen) Offset.Zero else findParentNodePosition(nodes, node)
-
-            val x = origin.x + (node.distanceFromCenter * cos(radians)).toFloat()
-            val y = origin.y + (node.distanceFromCenter * sin(radians)).toFloat()
-            node.position = Offset(x, y)
-        }
-    }
-}
-
 /**
  * Positions second-generation nodes around their parent node.
  */
-private fun computeSecondGenPositions(nodes: List<Node>) {
+private fun computeNodesAroundParents(nodes: List<Node>) {
     nodes.forEach { parentNode ->
-        val secondGenNodes = nodes.filter {
-            it.connections.contains(parentNode.id) && it.id != "1" && it.id != parentNode.id
+        val children = nodes.filter {
+            it.connections.contains(parentNode.id) && it.id != "1" && it.id != parentNode.id // excludes root node
         }
 
-        if (secondGenNodes.isNotEmpty()) {
-            val count = secondGenNodes.size
-            secondGenNodes.forEachIndexed { i, childNode ->
+        if (children.isNotEmpty()) {
+            val count = children.size
+            children.forEachIndexed { i, childNode ->
                 val angle = i * (360f / count)
                 val radians = Math.toRadians(angle.toDouble())
-                val px =
-                    parentNode.position.x + (childNode.distanceFromCenter * cos(radians)).toFloat()
-                val py =
-                    parentNode.position.y + (childNode.distanceFromCenter * sin(radians)).toFloat()
+                val px = parentNode.position.x + (childNode.distanceFromCenter * cos(radians)).toFloat()
+                val py = parentNode.position.y + (childNode.distanceFromCenter * sin(radians)).toFloat()
                 childNode.position = Offset(px, py)
             }
         }
@@ -214,11 +180,11 @@ private fun DrawScope.drawConnections(
                 when (node.visibility) {
                     NodeVisibility.NORMAL -> {
                         drawLine(
-                            color = if (node.positiveKarma >= 50.0) {
+                            color = if (node.axiom >= 50.0) {
                                 Color.Green
                             } else {
-                                    Color.Red
-                                },
+                                Color.Red
+                            },
                             start = start,
                             end = end,
                             strokeWidth = strokeWidth
@@ -259,10 +225,10 @@ private fun DrawScope.drawNodes(
                 val radius = if (node == selectedNode) {
                     200f
                 } else {
-                    (60f / 100) + node.positiveKarma.toFloat()
+                    (60f / 100) + node.axiom.toFloat()
                 }
                 drawCircle(
-                    color = if (node.positiveKarma <= 50) Color.Red else Color.Green,
+                    color = if (node.axiom <= 50) Color.Red else Color.Green,
                     radius = radius,
                     center = nodeCenter
                 )
@@ -296,8 +262,10 @@ private fun DrawNodeImage(
     // Position the parent nodes
     (parentNodes + nodes).forEach { node ->
         val parentImageOffset = node.position + centerOffset
-        val parentImageOffsetX = with(density) { parentImageOffset.x.toDp() - (node.positiveKarma / 2).dp }
-        val parentImageOffsetY = with(density) { parentImageOffset.y.toDp() - (node.positiveKarma / 2).dp }
+        val parentImageOffsetX =
+            with(density) { parentImageOffset.x.toDp() - (node.axiom / 2).dp }
+        val parentImageOffsetY =
+            with(density) { parentImageOffset.y.toDp() - (node.axiom / 2).dp }
 
         Box(
             modifier = Modifier
@@ -308,7 +276,7 @@ private fun DrawNodeImage(
                 painter = painterResource(id = node.profileImage),
                 contentDescription = null,
                 modifier = Modifier
-                    .size((node.positiveKarma).dp) // Ensure size reflects karma
+                    .size((node.axiom).dp) // Ensure size reflects karma
                     .clip(CircleShape)
             )
         }

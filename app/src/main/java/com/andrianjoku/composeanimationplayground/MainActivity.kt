@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.andrianjoku.composeanimationplayground.examples.AddToCartAnimation
+import com.andrianjoku.composeanimationplayground.interactiveNodeGraph.NodeRelationGraph
 import com.andrianjoku.composeanimationplayground.pdp.ColorSelectionAnimation
 import com.andrianjoku.composeanimationplayground.pdp.ProductPage
 import com.andrianjoku.composeanimationplayground.ui.theme.ComposeAnimationPlaygroundTheme
@@ -20,6 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ComposeAnimationPlaygroundTheme {
+                NodeRelationGraph()
             }
         }
     }
