@@ -84,7 +84,7 @@ object Helper {
                 axiom = 55
             ),
             Node(
-                id = "11",
+                id = "9",
                 name = "Noah White",
                 position = Offset.Zero,
                 connections = listOf("1"),
@@ -93,7 +93,7 @@ object Helper {
                 axiom = 30
             ),
             Node(
-                id = "12",
+                id = "10",
                 name = "Isabella Harris",
                 position = Offset.Zero,
                 connections = listOf("1"),
@@ -102,7 +102,7 @@ object Helper {
                 axiom = 35
             ),
             Node(
-                id = "13",
+                id = "11",
                 name = "Ethan Clark",
                 position = Offset.Zero,
                 connections = listOf("1"),
@@ -111,7 +111,7 @@ object Helper {
                 axiom = 40
             ),
             Node(
-                id = "14",
+                id = "12",
                 name = "Charlotte Lewis",
                 position = Offset.Zero,
                 connections = listOf("1"),
@@ -120,7 +120,7 @@ object Helper {
                 axiom = 25
             ),
             Node(
-                id = "15",
+                id = "13",
                 name = "Amelia Hall",
                 position = Offset.Zero,
                 connections = listOf("2"),
@@ -129,7 +129,7 @@ object Helper {
                 axiom = 65
             ),
             Node(
-                id = "16",
+                id = "14",
                 name = "Alexander Young",
                 position = Offset.Zero,
                 connections = listOf("2"),
@@ -138,7 +138,7 @@ object Helper {
                 axiom = 42
             ),
             Node(
-                id = "17",
+                id = "15",
                 name = "Harper King",
                 position = Offset.Zero,
                 connections = listOf("2"),
@@ -147,7 +147,7 @@ object Helper {
                 axiom = 75
             ),
             Node(
-                id = "18",
+                id = "16",
                 name = "Lucas Wright",
                 position = Offset.Zero,
                 connections = listOf("2"),
@@ -156,7 +156,7 @@ object Helper {
                 axiom = 80
             ),
             Node(
-                id = "19",
+                id = "17",
                 name = "Ella Scott",
                 position = Offset.Zero,
                 connections = listOf("2"),
@@ -165,7 +165,7 @@ object Helper {
                 axiom = 50
             ),
             Node(
-                id = "20",
+                id = "18",
                 name = "Mason Green",
                 position = Offset.Zero,
                 connections = listOf("2"),
@@ -174,7 +174,7 @@ object Helper {
                 axiom = 70
             ),
             Node(
-                id = "21",
+                id = "19",
                 name = "Avery Adams",
                 position = Offset.Zero,
                 connections = listOf("2"),
@@ -183,7 +183,7 @@ object Helper {
                 axiom = 88
             ),
             Node(
-                id = "22",
+                id = "20",
                 name = "Logan Perez",
                 position = Offset.Zero,
                 connections = listOf("2"),
@@ -387,6 +387,33 @@ object Helper {
                 connections = listOf("38"),
                 distanceFromCenter = 300f,
                 profileImage = R.drawable.profile2,
+                axiom = 60
+            ),
+            Node(
+                id = "45",
+                name = "Victoria Foster",
+                position = Offset.Zero,
+                connections = listOf("28"),
+                distanceFromCenter = 500f,
+                profileImage = R.drawable.profile3,
+                axiom = 60
+            ),
+            Node(
+                id = "46",
+                name = "Victoria Foster",
+                position = Offset.Zero,
+                connections = listOf("28"),
+                distanceFromCenter = 400f,
+                profileImage = R.drawable.profile4,
+                axiom = 60
+            ),
+            Node(
+                id = "47",
+                name = "Victoria Foster",
+                position = Offset.Zero,
+                connections = listOf("45"),
+                distanceFromCenter = 400f,
+                profileImage = R.drawable.profile5,
                 axiom = 60
             )
 

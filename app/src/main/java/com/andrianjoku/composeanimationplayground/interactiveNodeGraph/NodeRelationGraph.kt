@@ -1,9 +1,15 @@
 package com.andrianjoku.composeanimationplayground.interactiveNodeGraph
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,9 +17,15 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,24 +38,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.math.sqrt
 
 @Composable
 fun NodeRelationGraph() {
-
     // 1. Data Setup & State
     val nodesState = remember { mutableStateOf(Helper.createSampleNodes()) }
     var selectedNode by remember { mutableStateOf(nodesState.value.first()) }
-
-    var nodeParentState by remember { mutableStateOf(emptyList<Node>()) }
+    var nodeParentState: List<Node> by remember { mutableStateOf(emptyList()) }
+    var isExpanded by remember { mutableStateOf(false) }
 
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+
         val screenCenter = Offset(maxWidth.toPx() / 2, maxHeight.toPx() / 2)
 
-       computeNodesAroundParents(nodesState.value)
+        computeNodesAroundParents(nodesState.value)
 
         LaunchedEffect(selectedNode) {
             updateNodeVisibility(
@@ -53,11 +66,16 @@ fun NodeRelationGraph() {
 
             println(" Selected Node is: $selectedNode")
 
+            // Add a delay before expanding the node
+            isExpanded = false // Collapse first
+            delay(1000) // Adjust delay as needed
+            isExpanded = true
+
             nodesState.value
                 .find { it.connections.contains(selectedNode.id) } // Look for children
-                ?.let { parentNode -> // selected node is a parent
-                    if (!nodeParentState.contains(parentNode)) {
-                        nodeParentState = nodeParentState + parentNode // Add to list
+                ?.let {
+                    if (!nodeParentState.contains(selectedNode)) {
+                        nodeParentState = nodeParentState + selectedNode // Add to list
                     }
                 }
         }
@@ -90,21 +108,83 @@ fun NodeRelationGraph() {
                     )
                 }
         ) {
+
             // 4. Drawing
             Canvas(modifier = Modifier.fillMaxSize()) {
                 drawConnections(nodesState.value, centerOffset, selectedNode)
-                drawNodes(nodesState.value, centerOffset, selectedNode)
+                drawNodes(nodesState.value, selectedNode, centerOffset)
             }
 
-            // 5. Overlays: User Node Image & Selected Node UI
+            // 5. Overlays
             DrawNodeImage(
                 nodeParentState,
-                nodesState.value.filter { it.isFirsGen(selectedNode) } // Filter for first-generation nodes
-                    .sortedByDescending { it.axiom } // Sort by positiveKarma in descending order
+                nodesState.value.filter { it.isFirsGen(selectedNode) }
+                    .sortedByDescending { it.axiom }
                     .take(5),
                 centerOffset
             )
-            DrawSelectedNodeOverlay(selectedNode)
+            CenteredAnimatedVisibilityOverlay(selectedNode, isExpanded)
+        }
+    }
+}
+
+@Composable
+fun CenteredAnimatedVisibilityOverlay(
+    selectedNode: Node,
+    isExpanded: Boolean
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center) // Centers everything in the parent Box
+    ) {
+        // Profile Image (collapsed state)
+        AnimatedVisibility(
+            visible = isExpanded,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut(),
+            modifier = Modifier.zIndex(1f) // Ensure the profile image is always above during its visibility
+        ) {
+            ProfileDetailsCard(selectedNode)
+        }
+    }
+}
+
+/**
+ * Card displaying detailed profile information.
+ */
+@Composable
+private fun ProfileDetailsCard(selectedNode: Node) {
+    Box(
+        modifier = Modifier
+            .size(200.dp) // Set the size of the circular container
+            .clip(CircleShape) // Make the container circular
+            .background(color = Color.LightGray) // Background color for the circle
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp), // Padding to ensure text isn't too close to the edges
+            verticalArrangement = Arrangement.Center, // Center the content vertically
+            horizontalAlignment = Alignment.CenterHorizontally // Center the content horizontally
+        ) {
+            Text(
+                text = selectedNode.name,
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            Text(
+                text = "Karma: ${selectedNode.axiom}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = "Connections: ${selectedNode.connections.size}",
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = selectedNode.description,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }
@@ -131,7 +211,6 @@ private fun computeNodesAroundParents(nodes: List<Node>) {
     }
 }
 
-
 /**
  * Updates the visibility of nodes based on the currently selected node.
  */
@@ -141,7 +220,7 @@ private fun updateNodeVisibility(nodes: List<Node>, selectedNode: Node) {
             if (node.connections.contains(selectedNode.id) || node == selectedNode || node.id == "1") {
                 NodeVisibility.NORMAL
             } else {
-                NodeVisibility.HIDDEN
+                NodeVisibility.DIMMED
             }
     }
 }
@@ -151,14 +230,6 @@ private fun updateNodeVisibility(nodes: List<Node>, selectedNode: Node) {
  */
 private fun findClosestNode(nodes: List<Node>, tapOffset: Offset, centerOffset: Offset): Node? {
     return nodes.minByOrNull { (it.position + centerOffset - tapOffset).getDistance() }
-}
-
-/**
- * Finds a parent node position for non-first-gen nodes.
- */
-private fun findParentNodePosition(nodes: List<Node>, node: Node): Offset {
-    val parentId = node.connections.find { it != "1" } ?: "1"
-    return nodes.find { it.id == parentId }?.position ?: Offset.Zero
 }
 
 /**
@@ -192,10 +263,6 @@ private fun DrawScope.drawConnections(
                     }
 
                     NodeVisibility.DIMMED -> {
-                        // Future logic if needed
-                    }
-
-                    NodeVisibility.HIDDEN -> {
                         drawLine(
                             color = Color.Gray,
                             start = start,
@@ -215,30 +282,38 @@ private fun DrawScope.drawConnections(
  */
 private fun DrawScope.drawNodes(
     nodes: List<Node>,
+    selectedNode: Node,
     centerOffset: Offset,
-    selectedNode: Node
+    pulseAnimationProgress: Float = 0f
 ) {
     nodes.forEach { node ->
         val nodeCenter = node.position + centerOffset
         when (node.visibility) {
             NodeVisibility.NORMAL -> {
-                val radius = if (node == selectedNode) {
-                    200f
+
+                if (node.connections.contains(selectedNode.id)) { // Check if connected
+                    val pulseScale = 1f + pulseAnimationProgress * 0.2f // Adjust scale factor
+                    val radius = (60f / 100) + node.axiom.toFloat() * pulseScale // Apply scale to radius
+
+                    drawCircle(
+                        color = if (node.axiom <= 50) Color.Red else Color.Green,
+                        radius = radius,
+                        center = nodeCenter
+                    )
                 } else {
-                    (60f / 100) + node.axiom.toFloat()
+                    drawCircle(
+                        color = if (node.axiom <= 50) Color.Red else Color.Green,
+                        radius = if (node == selectedNode) {
+                            (60f / 100) + node.axiom.toFloat()
+                        } else {
+                            150f
+                        },
+                        center = nodeCenter
+                    )
                 }
-                drawCircle(
-                    color = if (node.axiom <= 50) Color.Red else Color.Green,
-                    radius = radius,
-                    center = nodeCenter
-                )
             }
 
             NodeVisibility.DIMMED -> {
-                // Future logic if needed
-            }
-
-            NodeVisibility.HIDDEN -> {
                 drawCircle(
                     color = Color.Gray,
                     radius = 30f,
@@ -250,7 +325,6 @@ private fun DrawScope.drawNodes(
     }
 }
 
-
 @Composable
 private fun DrawNodeImage(
     parentNodes: List<Node>,
@@ -260,7 +334,7 @@ private fun DrawNodeImage(
     val density = LocalDensity.current
 
     // Position the parent nodes
-    (parentNodes + nodes).forEach { node ->
+    (nodes + parentNodes).forEach { node ->
         val parentImageOffset = node.position + centerOffset
         val parentImageOffsetX =
             with(density) { parentImageOffset.x.toDp() - (node.axiom / 2).dp }
@@ -283,38 +357,11 @@ private fun DrawNodeImage(
     }
 }
 
-/**
- * Draws the overlay that shows the currently selected node’s image and a label ("Blah").
- * This remains fixed at a certain offset on the screen.
- */
-@Composable
-private fun DrawSelectedNodeOverlay(selectedNode: Node) {
-    Box(
-        modifier = Modifier
-            .offset(145.dp, 350.dp)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Image(
-                painter = painterResource(id = selectedNode.profileImage),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-            )
-        }
-    }
-}
-
 @Composable
 fun Dp.toPx(): Float {
     val density = LocalDensity.current
     return with(density) { this@toPx.toPx() }
 }
-
-private fun Offset.getDistance(): Float = sqrt(x * x + y * y)
 
 @Preview
 @Composable
